@@ -1,0 +1,22 @@
+import numpy as np
+
+num_users = 4
+num_bits = 100
+SNR_dB = 10
+
+user_data = np.random.randint(2, size=(num_users, num_bits))
+spreading_codes = np.round(np.random.rand(num_users, num_bits)) * 2 - 1
+spread_data = user_data * spreading_codes
+
+SNR = 10**(SNR_dB/10)
+noise_power = 1/SNR
+noise = np.sqrt(noise_power/2) * (np.random.randn(num_users, num_bits) + 1j*np.random.randn(num_users, num_bits))
+
+received_signal = spread_data + noise
+demodulated_data = received_signal * spreading_codes
+decoded_data = np.sum(demodulated_data, axis=1) > 0
+
+for i in range(num_users):
+    print(f'User {i+1} Original Data: {user_data[i,:]}')
+    decoded_bits = decoded_data[i].astype(int)  # Convert boolean to integer (0 or 1)
+    print(f'User {i+1} Decoded Data: {decoded_bits}')
